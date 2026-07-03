@@ -62,7 +62,7 @@ def save_manifest(outdir, manifest):
         json.dump(manifest, f, indent=2)
 
 
-def list_jpg_urls(directory_url, frame_count=20):
+def list_jpg_urls(directory_url, start_frame=11, end_frame=20):
     """
     Build the list of candidate image URLs directly.
 
@@ -72,27 +72,25 @@ def list_jpg_urls(directory_url, frame_count=20):
     hour, so we just probe every plausible numeric filename each run and let
     the hash-based dedup in run_once() sort out what's actually new.
 
-    We try both zero-padded ("01.jpg") and unpadded ("1.jpg") forms since
-    we've only directly confirmed the padded two-digit form (11.jpg..20.jpg).
-    Nonexistent combinations simply 404 and are skipped -- harmless.
+    Confirmed range is 11.jpg..20.jpg (two-digit, no zero-padding ambiguity
+    since both n and n:02d produce the same string for n >= 10). Filenames
+    below 11 aren't part of the rolling loop -- e.g. 1.jpg turned out to be
+    an unrelated legacy file with an old 2015 timestamp -- so we don't probe
+    them by default.
     """
     urls = []
-    seen = set()
-    for n in range(1, frame_count + 1):
-        for name in (f"{n:02d}.jpg", f"{n}.jpg"):
-            url = urljoin(directory_url, name)
-            if url not in seen:
-                seen.add(url)
-                urls.append(url)
+    for n in range(start_frame, end_frame + 1):
+        url = urljoin(directory_url, f"{n:02d}.jpg")
+        urls.append(url)
     return urls
 
 
-def run_once(outdir, directory_url, verbose=True):
+def run_once(outdir, directory_url, start_frame=11, end_frame=20, verbose=True):
     os.makedirs(outdir, exist_ok=True)
     manifest = load_manifest(outdir)
     seen = manifest["seen_hashes"]
 
-    urls = list_jpg_urls(directory_url)
+    urls = list_jpg_urls(directory_url, start_frame, end_frame)
 
     if verbose:
         print(f"[{now_str()}] Probing {len(urls)} candidate filename(s).")
@@ -162,12 +160,12 @@ def make_zip(outdir, zip_path=None):
     return zip_path
 
 
-def loop(outdir, directory_url, interval_seconds, duration_hours):
+def loop(outdir, directory_url, interval_seconds, duration_hours, start_frame=11, end_frame=20):
     end_time = time.time() + duration_hours * 3600
     print(f"[{now_str()}] Starting loop. Checking every {interval_seconds}s "
           f"until {datetime.fromtimestamp(end_time).strftime('%Y-%m-%d %H:%M:%S')}.")
     while time.time() < end_time:
-        run_once(outdir, directory_url)
+        run_once(outdir, directory_url, start_frame, end_frame)
         time.sleep(interval_seconds)
     print(f"[{now_str()}] Loop finished (duration reached).")
 
@@ -176,6 +174,8 @@ def main():
     parser = argparse.ArgumentParser(description="Grab & dedupe NOAA Guam IR satellite frames.")
     parser.add_argument("--outdir", default=DEFAULT_OUTDIR, help="Where to save images/manifest.")
     parser.add_argument("--url", default=DIRECTORY_URL, help="Directory URL to poll.")
+    parser.add_argument("--start-frame", type=int, default=11, help="Lowest frame number to probe (default 11).")
+    parser.add_argument("--end-frame", type=int, default=20, help="Highest frame number to probe (default 20).")
     parser.add_argument("--once", action="store_true", help="Run a single check-and-download pass.")
     parser.add_argument("--loop", action="store_true", help="Run repeatedly (not recommended for multi-day; prefer cron).")
     parser.add_argument("--interval", type=int, default=1800, help="Seconds between checks in --loop mode (default 1800 = 30 min).")
@@ -188,10 +188,10 @@ def main():
         return
 
     if args.loop:
-        loop(args.outdir, args.url, args.interval, args.duration_hours)
+        loop(args.outdir, args.url, args.interval, args.duration_hours, args.start_frame, args.end_frame)
     else:
         # default behavior (including plain --once) = single pass
-        run_once(args.outdir, args.url)
+        run_once(args.outdir, args.url, args.start_frame, args.end_frame)
 
 
 if __name__ == "__main__":
