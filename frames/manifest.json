@@ -174,7 +174,12 @@
       "saved_as": "20260704_154223_20.jpg",
       "source_url": "https://www.ospo.noaa.gov/Products_imagery/guam/guamloops/ir/20.jpg",
       "downloaded_at_utc": "20260704_154223"
+    },
+    "4675e3b08fd343c096398d55f6b4b3a3520dcbf1606ded6377480306158ce601": {
+      "saved_as": "20260704_170121_19.jpg",
+      "source_url": "https://www.ospo.noaa.gov/Products_imagery/guam/guamloops/ir/19.jpg",
+      "downloaded_at_utc": "20260704_170121"
     }
   },
-  "downloaded_count": 35
+  "downloaded_count": 36
 }
