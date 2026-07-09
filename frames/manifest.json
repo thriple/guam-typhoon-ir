@@ -899,7 +899,22 @@
       "saved_as": "20260709_190729_19.jpg",
       "source_url": "https://www.ospo.noaa.gov/Products_imagery/guam/guamloops/ir/19.jpg",
       "downloaded_at_utc": "20260709_190729"
+    },
+    "10622c2cc8cfa76287501481c1b7d8bb34606bc438d95fab12b354df4dfd22bc": {
+      "saved_as": "20260709_210225_17.jpg",
+      "source_url": "https://www.ospo.noaa.gov/Products_imagery/guam/guamloops/ir/17.jpg",
+      "downloaded_at_utc": "20260709_210225"
+    },
+    "6cb9bddb8447a9013b87e5d68ab6a5c89ad630ea029475739ca2bf2fb92c3787": {
+      "saved_as": "20260709_210225_18.jpg",
+      "source_url": "https://www.ospo.noaa.gov/Products_imagery/guam/guamloops/ir/18.jpg",
+      "downloaded_at_utc": "20260709_210225"
+    },
+    "6c1b346b0b4f57b0e65faeb831b9addbd0880cf9f8f418f682b0a4a207588249": {
+      "saved_as": "20260709_210225_19.jpg",
+      "source_url": "https://www.ospo.noaa.gov/Products_imagery/guam/guamloops/ir/19.jpg",
+      "downloaded_at_utc": "20260709_210225"
     }
   },
-  "downloaded_count": 180
+  "downloaded_count": 183
 }
